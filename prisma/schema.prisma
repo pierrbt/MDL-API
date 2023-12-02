@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.sqlite3"
+}
+
+model Member {
+  id        String  @id @unique @default(uuid())
+  firstName String
+  lastName  String
+  class     String
+  role      String?
+  age       Int
+}
+
+model Message {
+  id      String @id @unique @default(uuid())
+  author  String
+  message String
+  email   String
+}
