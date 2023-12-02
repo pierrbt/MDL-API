@@ -2,7 +2,7 @@ import Fastify from 'fastify' // Fastify pour le serveur Web
 import { PrismaClient } from '@prisma/client' // Prisma en ORM
 import z from "zod" // Zod pour la validation des entrées
 
-const prismaClient = new PrismaClient()
+const prisma = new PrismaClient()
 const server = Fastify()
 
 const memberSchema = z.object({ // On créé l'objet de validation des membres
@@ -22,7 +22,7 @@ const messageSchema = z.object({
 
 server.get("/members", async (request, reply) => {
   try {
-    const members = await prismaClient.member.findMany();
+    const members = await prisma.member.findMany();
     return { message: "Successfully fetched members.", data: members }
   } catch (err) {
     reply
@@ -48,15 +48,28 @@ server.post("/members", async (request, reply) => {
 })
 
 server.get("/messages", async (request, reply) => {
-  reply
-    .code(501)
-    .send({ message: "Not implemented yet!" })
+  try {
+    const messages = await prisma.message.findMany();
+    return {message: "Successfully fetched messages", data: messages}
+  } catch (err) {
+    return reply.code(500).send({message: "Unexpected error while fetching messages.", error: err})
+  }
 })
 
 server.post("/messages", async (request, reply) => {
-  reply
-    .code(501)
-    .send({ message: "Not implemented yet!" })
+  try {
+    const message = await messageSchema.safeParse(request.body);
+    if(!message.success) {
+      return reply.code(400).send({message: "Invalid parameters", error: err})
+    } else {
+      const createdMessage = await prisma.message.create({
+        data: message.data
+      });
+      return reply.code(200).send({message: "Successfully created a new message.", data: createdMessage})
+    }
+  } catch (err) {
+    return reply.code(500).send({message: "Unexpected error while adding a message.", error: err})
+  }
 })
 
 const PORT = 3000;
