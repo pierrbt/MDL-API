@@ -11,7 +11,7 @@ server.get("/members", async (request, reply) => {
     const members = await prisma.member.findMany()
     return { message: "Successfully fetched members.", data: members }
   } catch (err) {
-    reply.code(500).send({ message: "Error while fetching members!" })
+    return reply.code(500).send({ message: "Error while fetching members!" })
   }
 })
 
@@ -29,7 +29,7 @@ server.post("/members", async (request, reply) => {
       return { message: "Successfully added member.", data: createdMember }
     }
   } catch (err) {
-    reply
+    return reply
       .code(500)
       .send({ message: "Unexpected error while adding member", error: err })
   }
@@ -51,14 +51,14 @@ server.post("/messages", async (request, reply) => {
   try {
     const message = await messageSchema.safeParse(request.body)
     if (!message.success) {
-      reply
+      return reply
         .code(400)
         .send({ message: "Invalid parameters", error: message.error })
     } else {
       const createdMessage = await prisma.message.create({
         data: message.data,
       })
-      reply.code(200).send({
+      return reply.code(200).send({
         message: "Successfully created a new message.",
         data: createdMessage,
       })
@@ -70,8 +70,21 @@ server.post("/messages", async (request, reply) => {
   }
 })
 
-server.all("/", async () => {
-  return { message: "Welcome on the MDL-API. This is excellent API !" }
+server.all("/", async (request, reply) => {
+  try {
+    const memberCount = await prisma.member.count()
+    const messageCount = await prisma.message.count()
+    return {
+      message:
+        "Welcome on the MDL-API. This is the backend API for the Livet's MDL website. You can see some stats below",
+      stats: `There is currently ${memberCount} member(s) registered and ${messageCount} message(s) available !`,
+    }
+  } catch (err) {
+    return reply.code(500).send({
+      message:
+        "Welcome on the MDL-API. This is the backend API for the Livet's MDL website, but unfortunately, the DB seems down for the moment!",
+    })
+  }
 })
 
 const PORT = 3000
