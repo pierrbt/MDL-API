@@ -3,12 +3,12 @@
   "minify": true,
   // Optional, configure minification options
   "jsc": {
-  "minify": {
-  "compress": {
-  "unused": true
-  },
-  "mangle": true
-  }
+    "minify": {
+    "compress": {
+      "unused": true
+    },
+    "mangle": true
+    }
   }
  }
  
