@@ -1,24 +1,10 @@
 import Fastify from "fastify" // Fastify pour le serveur Web
 import { PrismaClient } from "@prisma/client" // Prisma en ORM
-import z from "zod" // Zod pour la validation des entrées
+import { memberSchema, messageSchema } from "./validators.js"
+import process from "node:process"
 
 const prisma = new PrismaClient()
 const server = Fastify()
-
-const memberSchema = z.object({
-  // On créé l'objet de validation des membres
-  firstName: z.string().min(2).max(20),
-  lastName: z.string().min(2).max(20),
-  age: z.number().min(10).max(99),
-  role: z.string(),
-  class: z.string(),
-})
-
-const messageSchema = z.object({
-  author: z.string(),
-  message: z.string().min(5),
-  email: z.string().email(),
-})
 
 server.get("/members", async (request, reply) => {
   try {
@@ -37,7 +23,7 @@ server.post("/members", async (request, reply) => {
         .code(400)
         .send({ message: "Invalid parameters", error: member.error })
     } else {
-      const createdMember = await prismaClient.member.create({
+      const createdMember = await prisma.member.create({
         data: member.data,
       })
       return { message: "Successfully added member.", data: createdMember }
@@ -90,12 +76,16 @@ server.all("/", async () => {
 
 const PORT = 3000
 
+process.on("beforeExit", async () => {
+  await prisma.$disconnect()
+  console.log("🛑 Server stopped !")
+})
+
 try {
   await prisma.$connect()
   const hostname = await server.listen({ port: PORT })
   console.log(`🚀 Server listening on ${hostname}`)
 } catch (err) {
   server.log.error(err)
-  await prisma.$disconnect()
   process.exit(1)
 }
