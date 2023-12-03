@@ -54,12 +54,10 @@ server.get("/messages", async (request, reply) => {
     const messages = await prisma.message.findMany()
     return { message: "Successfully fetched messages", data: messages }
   } catch (err) {
-    return reply
-      .code(500)
-      .send({
-        message: "Unexpected error while fetching messages.",
-        error: err,
-      })
+    return reply.code(500).send({
+      message: "Unexpected error while fetching messages.",
+      error: err,
+    })
   }
 })
 
@@ -74,12 +72,10 @@ server.post("/messages", async (request, reply) => {
       const createdMessage = await prisma.message.create({
         data: message.data,
       })
-      reply
-        .code(200)
-        .send({
-          message: "Successfully created a new message.",
-          data: createdMessage,
-        })
+      reply.code(200).send({
+        message: "Successfully created a new message.",
+        data: createdMessage,
+      })
     }
   } catch (err) {
     return reply
@@ -89,7 +85,7 @@ server.post("/messages", async (request, reply) => {
 })
 
 server.all("/", async () => {
-  return { message: "Welcome on the MDL-API." }
+  return { message: "Welcome on the MDL-API. This is excellent API !" }
 })
 
 const PORT = 3000
