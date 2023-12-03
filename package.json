@@ -4,7 +4,7 @@
   "description": "The complete API of the Livet's MDL website, using the Rest model and implemented using Fastify.js",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./src",
+    "dev": "node --watch ./src",
     "build": "pnpm exec swc ./src -o ./dist/index.js",
     "start": "node ./dist/index.js"
   },
