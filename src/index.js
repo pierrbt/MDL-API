@@ -1,11 +1,26 @@
+/*
+  Ce programme est l'API du site de la MDL de Livet,
+  Il utilise le modèle REST et échange les informations en JSON,
+  Le serveur HTTP est fait par le framework Fastify,
+  J'utilise Prisma comme ORM pour la base de données SQLite.
+
+  Dans le configuration du serveur, le processus Node est placé derrière
+  un reverse-proxy Apache2 sur Debian.
+
+  Auteur: Pierre BIDET
+  Licence : MIT
+
+  Dernière modification: 2023/12
+*/
+
 const PORT = 3000 // Port par défaut pour Fastify
 
 import Fastify from "fastify" // Fastify pour le serveur Web
 import { PrismaClient } from "@prisma/client" // Prisma en ORM
 import { memberSchema, messageSchema } from "./validators.js" // Schémas Zod
-import process from "node:process"
-import cors from "@fastify/cors"
-import helmet from "@fastify/helmet"
+import process from "node:process" // Process pour quitter
+import cors from "@fastify/cors" // CORS pour les requêtes distantes
+import helmet from "@fastify/helmet" // Helmet pour les headers de sécurité
 
 // On créé les interfaces pour l'API et la DB
 const prisma = new PrismaClient()
@@ -15,6 +30,7 @@ const server = Fastify()
 server.register(cors)
 server.register(helmet)
 
+// On définit les routes avec server.METHOD(ROUTE, HANDLER)
 server.get("/members", async (request, reply) => {
   try {
     const members = await prisma.member.findMany() // findMany pour récupérer toute la table
