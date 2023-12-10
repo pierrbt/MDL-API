@@ -37,7 +37,9 @@ server.get("/members", async (request, reply) => {
     return { message: "Successfully fetched members.", data: members } // On renvoie les membres
   } catch (err) {
     // Si il y a une erreur avec Prisma, on arrive dans le catch
-    return reply.code(500).send({ message: "Error while fetching members!" })
+    return reply
+      .code(500)
+      .send({ message: "Error while fetching members!", error: err })
   }
 })
 
