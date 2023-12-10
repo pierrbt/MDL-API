@@ -18,17 +18,17 @@ Le processus Node est lancé depuis `pm2`
 
 ## Installation
 
-
 ```bash
 pnpm i      # Installation des dépendances
 pnpm exec prisma generate # Génération client Prisma
 pnpm exec prisma db push # Génération DB Prisma
 pnpm dev    # Lancement en dev
 
-# Pour la version de production : 
+# Pour la version de production :
 pnpm build  # Build stable et minifié
 pnpm start  # Lancement du build
 ```
+
 ## Auteur et licence
 
 - Auteur: Pierre BIDET
