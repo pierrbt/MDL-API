@@ -13,7 +13,7 @@
   Dernière modification: 2023/12
 */
 
-const PORT = 3000 // Port par défaut pour Fastify
+const PORT = 5444 // Port par défaut pour Fastify
 
 import Fastify from "fastify" // Fastify pour le serveur Web
 import { PrismaClient } from "@prisma/client" // Prisma en ORM
