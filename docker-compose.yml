@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  mdl-api:
+    image: mdl-api
+    ports:
+      - "5444:5444"
