@@ -1,17 +1,17 @@
-/*
-  Ce programme est l'API du site de la MDL de Livet,
-  Il utilise le modèle REST et échange les informations en JSON,
-  Le serveur HTTP est fait par le framework Fastify,
-  J'utilise Prisma comme ORM pour la base de données SQLite.
+/**
+ Ce programme est l'API du site de la MDL de Livet,
+ Il utilise le modèle REST et échange les informations en JSON,
+ Le serveur HTTP est fait par le framework Fastify,
+ J'utilise Prisma comme ORM pour la base de données SQLite.
 
-  Dans le configuration du serveur, le processus Node est placé derrière
-  un reverse-proxy Apache2 sur Debian.
+ Dans le configuration du serveur, le processus Node est placé derrière
+ un reverse-proxy Apache2 sur Debian.
 
-  Auteur: Pierre BIDET
-  Licence : MIT
+ Auteur: Pierre BIDET
+ Licence : MIT
 
-  Dernière modification: 2023/12
-*/
+ Dernière modification: 2023/12
+ */
 
 const PORT = 5444 // Port par défaut pour Fastify
 
@@ -21,6 +21,7 @@ import { memberSchema, messageSchema } from "./validators.js" // Schémas Zod
 import process from "node:process" // Process pour quitter
 import cors from "@fastify/cors" // CORS pour les requêtes distantes
 import helmet from "@fastify/helmet" // Helmet pour les headers de sécurité
+import { join } from "node:path" // Path pour les chemins
 
 // On créé les interfaces pour l'API et la DB
 const prisma = new PrismaClient()
@@ -30,8 +31,14 @@ const server = Fastify()
 server.register(cors)
 server.register(helmet)
 
+// On configure le serveur pour envoyer les fichiers statiques du site
+server.register(await import("@fastify/static"), {
+  root: join(process.cwd(), "static"), // Assurez-vous que le chemin vers le dossier statique est correct
+  prefix: "/",
+})
+
 // On définit les routes avec server.METHOD(ROUTE, HANDLER)
-server.get("/members", async (request, reply) => {
+server.get("/api/members", async (request, reply) => {
   try {
     const members = await prisma.member.findMany() // findMany pour récupérer toute la table
     return { message: "Successfully fetched members.", data: members } // On renvoie les membres
@@ -43,7 +50,7 @@ server.get("/members", async (request, reply) => {
   }
 })
 
-server.post("/members", async (request, reply) => {
+server.post("/api/members", async (request, reply) => {
   try {
     // On utilise le schéma Zod pour vérifier l'entrée de l'utilisateur
     const member = await memberSchema.safeParse(request.body)
@@ -68,7 +75,7 @@ server.post("/members", async (request, reply) => {
 
 // C'est exactement la même logique pour les messages de contact :
 
-server.get("/messages", async (request, reply) => {
+server.get("/api/messages", async (request, reply) => {
   try {
     const messages = await prisma.message.findMany()
     return { message: "Successfully fetched messages", data: messages }
@@ -80,7 +87,7 @@ server.get("/messages", async (request, reply) => {
   }
 })
 
-server.post("/messages", async (request, reply) => {
+server.post("/api/messages", async (request, reply) => {
   try {
     const message = await messageSchema.safeParse(request.body)
     if (!message.success) {
@@ -103,22 +110,13 @@ server.post("/messages", async (request, reply) => {
   }
 })
 
-// On fait quand même une page de bienvenue si quelqu'un vient à la racine du site
-server.all("/", async (request, reply) => {
-  try {
-    const memberCount = await prisma.member.count()
-    const messageCount = await prisma.message.count()
-    return {
-      message:
-        "Welcome on the MDL-API. This is the backend API for the Livet's MDL website. You can see some stats below",
-      stats: `There is currently ${memberCount} member(s) registered and ${messageCount} message(s) available !`,
-    }
-  } catch (err) {
-    return reply.code(500).send({
-      message:
-        "Welcome on the MDL-API. This is the backend API for the Livet's MDL website, but unfortunately, the DB seems down for the moment!",
-    })
-  }
+server.setNotFoundHandler((request, reply) => {
+  reply.code(404).send({ message: "Not Found" })
+})
+
+// On définit la route pour la page d'accueil
+server.get("/", async (request, reply) => {
+  return reply.sendFile("index.html")
 })
 
 // On quitte la DB avant de terminer le processus
