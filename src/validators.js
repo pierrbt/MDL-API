@@ -1,4 +1,4 @@
-import z from "zod"
+import z from "zod" // Zod pour la validation des entrées
 
 const memberSchema = z.object({
   // On créé l'objet de validation des membres
@@ -10,6 +10,7 @@ const memberSchema = z.object({
 })
 
 const messageSchema = z.object({
+  // On créé l'objet de validation des messages
   author: z.string(),
   message: z.string().min(5),
   email: z.string().email(),
