@@ -7,7 +7,8 @@
     "dev": "node ./src",
     "build": "pnpm exec swc ./src -d ./dist",
     "start": "node ./dist/index.js",
-    "fmt": "pnpm exec prettier --write --end-of-line=auto ./src"
+    "fmt": "pnpm exec prettier --write --end-of-line=auto ./src",
+    "prod": "pnpm i && pnpm run build && pnpm prune --prod && pnpm run start"
   },
   "keywords": [],
   "author": "pierrbt",
