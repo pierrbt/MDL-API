@@ -33,7 +33,7 @@ server.register(helmet)
 
 // On configure le serveur pour envoyer les fichiers statiques du site
 server.register(await import("@fastify/static"), {
-  root: join(process.cwd(), "static"), // Assurez-vous que le chemin vers le dossier statique est correct
+  root: join(process.cwd(), "./static"), // Assurez-vous que le chemin vers le dossier statique est correct
   prefix: "/",
 })
 
