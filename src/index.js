@@ -21,6 +21,8 @@ import { memberSchema, messageSchema } from "./validators.js" // Schémas Zod
 import process from "node:process" // Process pour quitter
 import cors from "@fastify/cors" // CORS pour les requêtes distantes
 import helmet from "@fastify/helmet" // Helmet pour les headers de sécurité
+import formbody from "@fastify/formbody" // Parser pour les forms
+
 import { join } from "node:path" // Path pour les chemins
 
 // On créé les interfaces pour l'API et la DB
@@ -30,6 +32,7 @@ const server = Fastify()
 // On ajoute les plugins cors et helmet pour mettre des headers de sécurité
 server.register(cors)
 server.register(helmet)
+server.register(formbody)
 
 // On configure le serveur pour envoyer les fichiers statiques du site
 server.register(await import("@fastify/static"), {
