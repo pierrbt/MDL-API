@@ -4,7 +4,7 @@ const memberSchema = z.object({
   // On créé l'objet de validation des membres
   firstName: z.string().min(2).max(20),
   lastName: z.string().min(2).max(20),
-  age: z.number().min(10).max(99),
+  age: z.coerce.number(),
   role: z.string(),
   class: z.string(),
 })
