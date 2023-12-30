@@ -31,7 +31,14 @@ const server = Fastify()
 
 // On ajoute les plugins cors et helmet pour mettre des headers de sécurité
 server.register(cors)
-server.register(helmet)
+server.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      "default-src": ["self", "https://api.mdl.veagle.fr"],
+    },
+  },
+})
+
 server.register(formbody)
 
 // On configure le serveur pour envoyer les fichiers statiques du site
