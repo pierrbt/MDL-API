@@ -34,7 +34,7 @@ server.register(cors)
 server.register(helmet, {
   contentSecurityPolicy: {
     directives: {
-      "default-src": ["self", "https://api.mdl.veagle.fr"],
+      "default-src": ["self", "https://mdl.veagle.fr", "https://api.mdl.veagle.fr"],
     },
   },
 })
