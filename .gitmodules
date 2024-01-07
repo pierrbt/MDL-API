@@ -1,3 +1,4 @@
 [submodule "static"]
 	path = static
 	url = https://github.com/pierrbt/MDL-Livet.git
+	branch = master
